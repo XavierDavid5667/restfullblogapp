@@ -11,6 +11,12 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+# IntelliJ IDEA specific ignores
+.idea/
+*.iws
+*.iml
+*.ipr
+
 #Eclipse
 .project
 .classpath

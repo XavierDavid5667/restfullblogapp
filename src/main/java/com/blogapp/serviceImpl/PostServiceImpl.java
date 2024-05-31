@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.blogapp.dto.CategoryDTO;
@@ -103,7 +106,7 @@ public class PostServiceImpl implements PostService {
     public void deletePost(Integer postId) {
         log.info("Deleting post with ID: {}", postId);
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> throw new ResouceNotFoundException("Post with given id " + postId + " not found!"));
+                .orElseThrow(() ->  new ResouceNotFoundException("Post with given id " + postId + " not found!"));
         postRepository.delete(post);
         log.info("Post with ID: {} deleted successfully", postId);
     }
@@ -114,10 +117,13 @@ public class PostServiceImpl implements PostService {
      * @return A list of all PostDTO.
      */
     @Override
-    public List<PostDTO> getAllPosts() {
+    public List<PostDTO> getAllPosts(int pageNumber, int pageSize) {
         log.info("Retrieving all posts");
-        List<Post> posts = postRepository.findAll();
-        log.info("All posts retrieved successfully");
+        //Pagination is often helpful when we have a large dataset and we want to present it to the user in smaller chunks.
+        Pageable pageable =  PageRequest.of(pageNumber, pageSize);
+        Page<Post> all = postRepository.findAll(pageable);
+        List<Post> posts = all.getContent();
+        log.info("{} Posts retrieved successfully", posts.size());
         return posts.stream().map(post -> mapper.map(post, PostDTO.class)).collect(Collectors.toList());
     }
 

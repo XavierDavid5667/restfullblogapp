@@ -4,14 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.blogapp.dto.PostDTO;
 import com.blogapp.services.PostService;
 
@@ -86,8 +79,8 @@ public class PostController {
      * @return ResponseEntity containing a list of all PostDTO and HTTP status.
      */
     @GetMapping("/getAllPosts")
-    public ResponseEntity<List<PostDTO>> getAllPosts() {
-        return new ResponseEntity<List<PostDTO>>(postService.getAllPosts(), HttpStatus.OK);
+    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam(value = "pageNumber", defaultValue = "1", required = false) Integer pageNumber, @RequestParam(value = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
+        return new ResponseEntity<List<PostDTO>>(postService.getAllPosts(pageNumber, pageSize), HttpStatus.OK);
     }
     
     /**
