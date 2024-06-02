@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.blogapp.dto.PostRespose;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import com.blogapp.dto.CategoryDTO;
 import com.blogapp.dto.PostDTO;
-import com.blogapp.dto.UserDTO;
 import com.blogapp.entities.Category;
 import com.blogapp.entities.Post;
 import com.blogapp.entities.User;
@@ -23,7 +22,6 @@ import com.blogapp.repositories.CategoryRepository;
 import com.blogapp.repositories.PostRepository;
 import com.blogapp.repositories.UserRepository;
 import com.blogapp.services.PostService;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -117,14 +115,23 @@ public class PostServiceImpl implements PostService {
      * @return A list of all PostDTO.
      */
     @Override
-    public List<PostDTO> getAllPosts(int pageNumber, int pageSize) {
+    public PostRespose getAllPosts(int pageNumber, int pageSize,String sortBy,String sortDir) {
         log.info("Retrieving all posts");
         //Pagination is often helpful when we have a large dataset and we want to present it to the user in smaller chunks.
-        Pageable pageable =  PageRequest.of(pageNumber, pageSize);
-        Page<Post> all = postRepository.findAll(pageable);
-        List<Post> posts = all.getContent();
+        Sort sort=sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable =  PageRequest.of(pageNumber, pageSize,sort);
+        Page<Post> postPage = postRepository.findAll(pageable);
+        List<Post> posts = postPage.getContent();
         log.info("{} Posts retrieved successfully", posts.size());
-        return posts.stream().map(post -> mapper.map(post, PostDTO.class)).collect(Collectors.toList());
+        List<PostDTO> listOFPostDto = posts.stream().map(post -> mapper.map(post, PostDTO.class)).collect(Collectors.toList());
+        PostRespose response = new PostRespose();
+        response.setPosts(listOFPostDto);
+        response.setPageNumber(postPage.getNumber());
+        response.setPageSize(postPage.getSize());
+        response.setTotalElements(postPage.getTotalElements());
+        response.setTotalPages(postPage.getTotalPages());
+        response.setLastPage(postPage.isLast());
+        return response;
     }
 
     /**

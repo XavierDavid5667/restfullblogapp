@@ -1,6 +1,7 @@
 package com.blogapp.contollers;
 
 import java.util.List;
+import com.blogapp.dto.PostRespose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,8 +80,8 @@ public class PostController {
      * @return ResponseEntity containing a list of all PostDTO and HTTP status.
      */
     @GetMapping("/getAllPosts")
-    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam(value = "pageNumber", defaultValue = "1", required = false) Integer pageNumber, @RequestParam(value = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
-        return new ResponseEntity<List<PostDTO>>(postService.getAllPosts(pageNumber, pageSize), HttpStatus.OK);
+    public ResponseEntity<PostRespose> getAllPosts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber, @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize,@RequestParam(value = "sortBy",defaultValue = "postId",required = false) String sortBy,@RequestParam(value = "sortDir",defaultValue = "asc",required = false) @PathVariable("sortDir") String sortDir) {
+        return new ResponseEntity<PostRespose>(postService.getAllPosts(pageNumber, pageSize,sortBy,sortDir), HttpStatus.OK);
     }
     
     /**
