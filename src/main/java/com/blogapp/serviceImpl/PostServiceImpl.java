@@ -191,9 +191,9 @@ public class PostServiceImpl implements PostService {
      * @return A list of posts that contain the specified keyword.
      */
     @Override
-    public List<Post> searchPostByKeyword(String keyword) {
-        // TODO: Implement search by keyword logic
+    public List<PostDTO> searchPostByKeyword(String keyword) {
         log.info("Searching for posts with keyword: {}", keyword);
-        return null;
+        List<Post> byTitleContaining = postRepository.findByTitleContaining(keyword);
+        return byTitleContaining.stream().map(post ->this.mapper.map(post, PostDTO.class)).collect(Collectors.toList());
     }
 }
