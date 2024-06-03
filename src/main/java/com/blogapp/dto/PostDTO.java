@@ -1,7 +1,11 @@
 package com.blogapp.dto;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.blogapp.entities.Category;
+import com.blogapp.entities.Comment;
 import com.blogapp.entities.User;
 
 import jakarta.persistence.ManyToOne;
@@ -18,5 +22,5 @@ public class PostDTO {
 	private Date date;
 	private CategoryDTO category;
 	private UserDTO user;
-
+    private Set<CommentDTO> comments = new HashSet<>();
 }
